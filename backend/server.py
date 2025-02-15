@@ -27,10 +27,9 @@ def add_user():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
     
-@app.route("/users/<id>", methods=["PATCH"])
-def update_user(id):
+@app.route("/users/<username>", methods=["PATCH"])
+def update_user(username):
     try:
-        user_id = ObjectId(id)
         data = request.json
 
         update = {}
@@ -38,7 +37,7 @@ def update_user(id):
         for field in data:
             update[field] = data[field]
 
-        result = users.update_one({"_id": user_id}, {"$set": update})
+        result = users.update_one({"username": username}, {"$set": update})
 
         if result.matched_count == 1:
             return jsonify({"message": "User updated successfully."}), 200
@@ -47,11 +46,10 @@ def update_user(id):
     except Exception as e:
         return jsonify({"error": str(e)}), 
 
-@app.route("/users/<id>", methods=["GET"])
-def get_user(id): 
+@app.route("/users/<username>", methods=["GET"])
+def get_user(username): 
     try:
-        user_id = ObjectId(id)
-        user = users.find_one({"_id": user_id})
+        user = users.find_one({"username": username})
 
         if user is None:
             return jsonify({"message": "User not found"}), 404
@@ -94,16 +92,15 @@ def get_users():
         return jsonify({"error": str(e)}), 
 
 
-@app.route("/users/<id>", methods=["DELETE"])
-def delete_user(id):
+@app.route("/users/<username>", methods=["DELETE"])
+def delete_user(username):
     try:
-        user_id = ObjectId(id)
-        result = users.delete_one({"_id": user_id})
+        result = users.delete_one({"username": username})
 
         if result.deleted_count == 1:
-            return jsonify({"message": f"User with ID {id} was deleted successfully."}), 200
+            return jsonify({"message": f"User with username {username} was deleted successfully."}), 200
         else:
-            return jsonify({"message": f"User with ID {id} not found."}), 404
+            return jsonify({"message": f"User with username {username} not found."}), 404
 
     except Exception as e:
         return jsonify({"error": str(e)}), 
