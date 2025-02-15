@@ -80,6 +80,7 @@ def get_users():
             user_details = {
                 "name": user.get("name", "N/A"),
                 "age": user.get("age", "N/A"),
+                "username": user.get("username", "N/A"),
                 "_id": user['_id']  # Including the ID of the user
             }
 
