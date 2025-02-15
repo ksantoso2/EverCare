@@ -95,22 +95,15 @@ def get_entries():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Endpoint for transcribing audio
+# Transcribing audio inputs
 @app.route("/transcribe", methods=["POST"])
 def transcribe_audio():
     if "audio" not in request.files:
         return jsonify({"error": "No audio file provided"}), 400
     
     audio_file = request.files["audio"]
-    username = request.form.get("username")  # Extract username from FormData
+    username = request.form.get("username")  
 
-    # if audio_file.filename == "" or not allowed_file(audio_file.filename):
-    #     if audio_file.filename == "":
-    #         app.logger.error("no audio filename")
-    #     if not allowed_file(audio_file.filename):
-    #         app.logger.error(f"file {audio_file.filename} not allowed")
-    #     return jsonify({"error": "Invalid file type. Allowed types are wav, mp3, ogg, webm."}), 400
-    
     if not username:
         return jsonify({"error": "Username is required"}), 400
 
@@ -121,7 +114,6 @@ def transcribe_audio():
         audio_file.save(file_path)
 
         file = open(file_path, "rb")
-        # audio_bytes = audio_file.read()
 
         transcription = openai_client.audio.transcriptions.create(
             model="whisper-1", 
@@ -131,7 +123,6 @@ def transcribe_audio():
         entries.insert_one({"username": username, "entry": transcription.text})
 
         return jsonify({'text': transcription.text})
-        # return jsonify({"message": "Transcription successful", "text": transcription.text}), 200
 
     except Exception as e:
         app.logger.error(e)
