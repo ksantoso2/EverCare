@@ -6,9 +6,14 @@ from bson import ObjectId
 import openai
 from werkzeug.utils import secure_filename
 import tempfile
+from dotenv import load_dotenv
+import uuid
+
+load_dotenv()
 
 # Set up OpenAI API key
-openai.api_key = "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"
+openai.api_key = os.getenv('OPENAI_API_KEY')
+openai_client = openai.OpenAI()
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for frontend requests
@@ -61,6 +66,7 @@ def add_entry():
         entries.insert_one({"username": username, "entry": entry})
         return jsonify({"message": "Entry added"}), 201
     except Exception as e:
+        app.logger.error(e)
         return jsonify({"error": str(e)}), 400
 
 # Get entries for a user
@@ -94,42 +100,45 @@ def get_entries():
 def transcribe_audio():
     if "audio" not in request.files:
         return jsonify({"error": "No audio file provided"}), 400
-
+    
     audio_file = request.files["audio"]
     username = request.form.get("username")  # Extract username from FormData
 
-    if audio_file.filename == "" or not allowed_file(audio_file.filename):
-        return jsonify({"error": "Invalid file type. Allowed types are wav, mp3, ogg, webm."}), 400
-
+    # if audio_file.filename == "" or not allowed_file(audio_file.filename):
+    #     if audio_file.filename == "":
+    #         app.logger.error("no audio filename")
+    #     if not allowed_file(audio_file.filename):
+    #         app.logger.error(f"file {audio_file.filename} not allowed")
+    #     return jsonify({"error": "Invalid file type. Allowed types are wav, mp3, ogg, webm."}), 400
+    
     if not username:
         return jsonify({"error": "Username is required"}), 400
 
     try:
-        # Save file temporarily
-        temp_file = tempfile.NamedTemporaryFile(delete=False)
-        temp_filename = secure_filename(audio_file.filename)
-        temp_file.close()
-        audio_file.save(temp_filename)
+        filename = f"{str(uuid.uuid4())}.wav"
+        os.makedirs("temp_audio", exist_ok=True)
+        file_path = os.path.join("temp_audio", filename)
+        audio_file.save(file_path)
 
-        # Use OpenAI Whisper for transcription
-        with open(temp_filename, "rb") as file:
-            response = openai.Audio.transcriptions.create(
-                model="whisper-1",
-                file=file,
-                language="en"
-            )
-            transcription = response['text']
-        
-        # Clean up temporary file
-        os.remove(temp_filename)
+        file = open(file_path, "rb")
+        # audio_bytes = audio_file.read()
 
-        # Save transcription to database
-        entries.insert_one({"username": username, "entry": transcription})
+        transcription = openai_client.audio.transcriptions.create(
+            model="whisper-1", 
+            file=file
+        )
 
-        return jsonify({"message": "Transcription successful", "text": transcription}), 200
+        entries.insert_one({"username": username, "entry": transcription.text})
+
+        return jsonify({'text': transcription.text})
+        # return jsonify({"message": "Transcription successful", "text": transcription.text}), 200
 
     except Exception as e:
+        app.logger.error(e)
         return jsonify({"error": str(e)}), 500
+    finally:
+        file.close()
+        os.remove(file_path)
 
 if __name__ == "__main__":
     app.run(debug=True)
