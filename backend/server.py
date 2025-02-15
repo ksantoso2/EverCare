@@ -1,163 +1,135 @@
-from flask import Flask, request, jsonify, session
+import os
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 from pymongo import MongoClient
 from bson import ObjectId
+import openai
+from werkzeug.utils import secure_filename
+import tempfile
+
+# Set up OpenAI API key
+openai.api_key = "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"
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for frontend requests
 
-client = MongoClient('mongodb://localhost:27017/') 
-db = client['demo'] 
-users = db['users']
-entries = db['entries']
+# MongoDB setup
+client = MongoClient("mongodb://localhost:27017/")
+db = client["demo"]
+users = db["users"]
+entries = db["entries"]
 
-from flask_cors import CORS
+# Allowed file extensions for audio upload
+ALLOWED_EXTENSIONS = {"wav", "mp3", "ogg", "webm"}
 
-app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+# Function to check allowed file extensions
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route("/login", methods=["POST"])
-def login():
-    # Get username from request body
-    data = request.json
-    username = data.get("username")
-    
-    if username:
-        # Store the username in the session
-        session['username'] = username
-        return jsonify({"message": f"User {username} logged in successfully"}), 200
-    else:
-        return jsonify({"error": "Username is required"}), 400
-
-@app.route("/chat", methods=["POST"])
-def chat():
-    if 'username' not in session:
-        return jsonify({"error": "User not logged in"}), 401  # Unauthorized
-
-    # Get the user input from the request
-    data = request.json
-    entry = data.get("entry")
-    
-    # Process the user input (chat logic can be added here)
-    response = f"Hello {session['username']}, you said: {entry}"
-    
-    return jsonify({"response": response}), 200
-
-@app.route("/logout", methods=["POST"])
-def logout():
-    # Clear the session
-    session.pop('username', None)
-    return jsonify({"message": "Logged out successfully"}), 200
-
+# Create user
 @app.route("/users", methods=["POST"])
 def add_user():
     try:
         data = request.json
-
         result = users.insert_one(data)
-
         return jsonify({"message": "User added", "user_id": str(result.inserted_id)}), 201
-
     except Exception as e:
         return jsonify({"error": str(e)}), 400
-    
-@app.route("/users/<username>", methods=["PATCH"])
-def update_user(username):
-    try:
-        data = request.json
 
-        update = {}
-
-        for field in data:
-            update[field] = data[field]
-
-        result = users.update_one({"username": username}, {"$set": update})
-
-        if result.matched_count == 1:
-            return jsonify({"message": "User updated successfully."}), 200
-        else:
-            return jsonify({"message": "User not found."}), 404
-    except Exception as e:
-        return jsonify({"error": str(e)}), 
-
-@app.route("/users/<username>", methods=["GET"])
-def get_user(username): 
-    try:
-        user = users.find_one({"username": username})
-
-        if user is None:
-            return jsonify({"message": "User not found"}), 404
-        
-        user['_id'] = str(user['_id'])
-
-        return jsonify(user), 200
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 
-
+# Get all users
 @app.route("/users", methods=["GET"])
-def get_users(): 
+def get_users():
     try:
-        # Fetch all users from the collection
-        cursor = users.find()
-
-        # Create a list to hold the user data
         user_list = []
-
-        # Loop through the cursor and add each user document to the list
-        for user in cursor:
-            # Convert the _id to string to make it JSON serializable
-            user['_id'] = str(user['_id'])
-            
-            user_details = {
-                "name": user.get("name", "N/A"),
-                "age": user.get("age", "N/A"),
-                "username": user.get("username", "N/A"),
-                "_id": user['_id']  # Including the ID of the user
-            }
-
-            user_list.append(user_details)
-
-        # Return the list of users as a JSON response
+        for user in users.find():
+            user_list.append({"_id": str(user["_id"]), "name": user.get("name", "N/A"), "age": user.get("age", "N/A"), "username": user.get("username", "N/A")})
         return jsonify(user_list), 200
-
     except Exception as e:
-        # Handle any errors that occur during the process
-        return jsonify({"error": str(e)}), 
+        return jsonify({"error": str(e)}), 400
 
-
-@app.route("/users/<username>", methods=["DELETE"])
-def delete_user(username):
+# Add entry
+@app.route("/entries", methods=["POST"])
+def add_entry():
     try:
-        result = users.delete_one({"username": username})
-
-        if result.deleted_count == 1:
-            return jsonify({"message": f"User with username {username} was deleted successfully."}), 200
-        else:
-            return jsonify({"message": f"User with username {username} not found."}), 404
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 
-
-
-@app.route("/<username>/chat", methods=["POST"])
-def add_entry(username):
-    try: 
         data = request.json
-        entry = data.get('entry')
+        username = data.get("username")
+        entry = data.get("entry")
 
-        if not entry:
-            return
+        if not username or not entry:
+            return jsonify({"error": "Username and entry are required"}), 400
 
-        chat_data = {
-            "username": username,
-            "entry": entry
-        }
-
-        entries.insert_one(chat_data)
-
-        return jsonify({"message": f"Entry added for user {username}"}), 201
-        
+        entries.insert_one({"username": username, "entry": entry})
+        return jsonify({"message": "Entry added"}), 201
     except Exception as e:
-        return jsonify({"error": str(e)}), 
+        return jsonify({"error": str(e)}), 400
+
+# Get entries for a user
+@app.route("/entries/<username>", methods=["GET"])
+def get_user_entries(username):
+    try:
+        user_entries = list(entries.find({"username": username}, {"_id": 0, "entry": 1}))
+        return jsonify(user_entries), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+# Get all entries
+@app.route("/entries", methods=["GET"])
+def get_entries():
+    try:
+        cursor = entries.find()
+        entries_list = []
+        for entry in cursor:
+            entry['_id'] = str(entry['_id'])
+            entries_list.append({
+                "username": entry.get("username", "N/A"),
+                "entry": entry.get("entry", "N/A"),
+                "_id": entry['_id']
+            })
+        return jsonify(entries_list), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# Endpoint for transcribing audio
+@app.route("/transcribe", methods=["POST"])
+def transcribe_audio():
+    if "audio" not in request.files:
+        return jsonify({"error": "No audio file provided"}), 400
+
+    audio_file = request.files["audio"]
+    username = request.form.get("username")  # Extract username from FormData
+
+    if audio_file.filename == "" or not allowed_file(audio_file.filename):
+        return jsonify({"error": "Invalid file type. Allowed types are wav, mp3, ogg, webm."}), 400
+
+    if not username:
+        return jsonify({"error": "Username is required"}), 400
+
+    try:
+        # Save file temporarily
+        temp_file = tempfile.NamedTemporaryFile(delete=False)
+        temp_filename = secure_filename(audio_file.filename)
+        temp_file.close()
+        audio_file.save(temp_filename)
+
+        # Use OpenAI Whisper for transcription
+        with open(temp_filename, "rb") as file:
+            response = openai.Audio.transcriptions.create(
+                model="whisper-1",
+                file=file,
+                language="en"
+            )
+            transcription = response['text']
+        
+        # Clean up temporary file
+        os.remove(temp_filename)
+
+        # Save transcription to database
+        entries.insert_one({"username": username, "entry": transcription})
+
+        return jsonify({"message": "Transcription successful", "text": transcription}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(debug=True) 
+    app.run(debug=True)
