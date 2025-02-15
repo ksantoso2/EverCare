@@ -47,6 +47,22 @@ def update_user(id):
     except Exception as e:
         return jsonify({"error": str(e)}), 
 
+@app.route("/users/<id>", methods=["GET"])
+def get_user(id): 
+    try:
+        user_id = ObjectId(id)
+        user = users.find_one({"_id": user_id})
+
+        if user is None:
+            return jsonify({"message": "User not found"}), 404
+        
+        user['_id'] = str(user['_id'])
+
+        return jsonify(user), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 
+
 @app.route("/users", methods=["GET"])
 def get_users(): 
     try:
