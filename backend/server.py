@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, session
 from pymongo import MongoClient
 from bson import ObjectId
 
@@ -14,6 +14,38 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
+@app.route("/login", methods=["POST"])
+def login():
+    # Get username from request body
+    data = request.json
+    username = data.get("username")
+    
+    if username:
+        # Store the username in the session
+        session['username'] = username
+        return jsonify({"message": f"User {username} logged in successfully"}), 200
+    else:
+        return jsonify({"error": "Username is required"}), 400
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    if 'username' not in session:
+        return jsonify({"error": "User not logged in"}), 401  # Unauthorized
+
+    # Get the user input from the request
+    data = request.json
+    entry = data.get("entry")
+    
+    # Process the user input (chat logic can be added here)
+    response = f"Hello {session['username']}, you said: {entry}"
+    
+    return jsonify({"response": response}), 200
+
+@app.route("/logout", methods=["POST"])
+def logout():
+    # Clear the session
+    session.pop('username', None)
+    return jsonify({"message": "Logged out successfully"}), 200
 
 @app.route("/users", methods=["POST"])
 def add_user():
@@ -105,6 +137,27 @@ def delete_user(username):
     except Exception as e:
         return jsonify({"error": str(e)}), 
 
+
+@app.route("/<username>/chat", methods=["POST"])
+def add_entry(username):
+    try: 
+        data = request.json
+        entry = data.get('entry')
+
+        if not entry:
+            return
+
+        chat_data = {
+            "username": username,
+            "entry": entry
+        }
+
+        entries.insert_one(chat_data)
+
+        return jsonify({"message": f"Entry added for user {username}"}), 201
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 
 
 if __name__ == "__main__":
     app.run(debug=True) 
