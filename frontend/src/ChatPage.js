@@ -79,7 +79,6 @@ function ChatPage() {
         const data = await response.json();
         if (data.text) {
           setEntry(data.text); // Set transcription as the entry
-          await handleEntrySubmit(new Event("submit"));
         }
       } catch (error) {
         console.error("Error transcribing audio:", error);
