@@ -1,4 +1,5 @@
-* {
+body,
+#root {
   font-family: 'Inter', sans-serif;
   /* text-align: center; */
   background-color: #FBF6EA !important;
@@ -19,72 +20,6 @@ textarea {
 
 button {
   font-size: 1.5rem;
-}
-
-.btn-green {
-  background-color: #5cb286 !important; /* Green background */
-  padding-top: 20px !important;
-  padding-bottom: 20px !important;
-  color: white; /* White text color */
-  padding: 8px;
-  border: none;
-  border-radius: 30px !important;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.btn-green:hover {
-  background-color: #218838 !important; /* Darker green on hover */
-}
-
-.btn-orange {
-  background-color: #f17453 !important; /* Green background */
-  color: white; /* White text color */
-  padding: 8px;
-  border: none;
-  border-radius: 30px !important;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.btn-orange:hover {
-  background-color: #d25b00 !important; /* Darker green on hover */
-}
-
-.btn-green {
-  background-color: #5cb286 !important;
-  /* Green background */
-  padding-top: 20px !important;
-  padding-bottom: 20px !important;
-  color: white;
-  /* White text color */
-  padding: 8px;
-  border: none;
-  border-radius: 30px !important;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.btn-green:hover {
-  background-color: #218838 !important;
-  /* Darker green on hover */
-}
-
-.btn-orange {
-  background-color: #f17453 !important;
-  /* Green background */
-  color: white;
-  /* White text color */
-  padding: 8px;
-  border: none;
-  border-radius: 30px !important;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.btn-orange:hover {
-  background-color: #d25b00 !important;
-  /* Darker green on hover */
 }
 
 input:focus,
