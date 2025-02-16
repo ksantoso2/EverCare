@@ -1,0 +1,53 @@
+.my-records-container {
+    text-align: center;
+    padding-top: 5rem;
+}
+
+.record-list {
+    margin: auto;
+    width: 70%;
+    text-align: left;
+}
+
+.record-item {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+}
+
+.date-header {
+    font-size: 1.5rem;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: #333;
+    border-top: 1px solid #ccc;
+    padding-top: 10px;
+}
+
+.record-item {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+}
+
+.button {
+    padding: 8px 16px;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.button-vitals {
+    background-color: #F1745A;
+}
+
+.button-chat {
+    background-color: #AF5676;
+}
+
+.button-home {
+    background-color: #dc3545;
+    margin-top: 20px;
+}
