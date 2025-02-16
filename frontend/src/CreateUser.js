@@ -48,7 +48,7 @@ function CreateUser() {
           height="90"
         />
       </picture>
-      <h1>Hi there, new User!</h1>
+      <h1>Hey there! Log in with EverCare</h1>
       <form
         onSubmit={handleSubmit}
         style={{

@@ -210,9 +210,9 @@ function ChatPage() {
     width="50" 
     height="50" 
   />
-</picture> WellNest Response:</h3>
+</picture> EverCare Response:</h3>
               <div id="ttsText">
-                {perplexityResponse || "Click microphone to speak..."}
+                {perplexityResponse}
               </div>
               <br />
             </div>
