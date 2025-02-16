@@ -55,8 +55,8 @@ function MainPage() {
         <img
           src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f31e/512.gif"
           alt="🌞"
-          width="90"
-          height="90"
+          width="110"
+          height="110"
         />
       </picture></h1>
           
