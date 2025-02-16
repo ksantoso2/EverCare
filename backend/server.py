@@ -110,6 +110,14 @@ def delete_user(username):
     except Exception as e:
         return jsonify({"error": str(e)}),
 
+@app.route("/users", methods=["DELETE"])
+def delete_all_users():
+    try:
+        result = users.delete_many({})  # Deletes all documents in the collection
+        return jsonify({"message": f"Deleted {result.deleted_count} users."}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 # Add entry
 @app.route("/entries", methods=["POST"])
@@ -130,6 +138,15 @@ def add_entry():
     except Exception as e:
         app.logger.error(e)
         return jsonify({"error": str(e)}), 400
+    
+@app.route("/entries", methods=["DELETE"])
+def delete_all_entries():
+    try:
+        result = entries.delete_many({})  # Delete all documents in the 'entries' collection
+        return jsonify({"message": "Deleted all entries", "deleted_count": result.deleted_count}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 # Get entries for a user
 @app.route("/entries/<username>", methods=["GET"])
@@ -184,7 +201,7 @@ def transcribe_audio():
             file=file
         )
 
-        entries.insert_one({"username": username, "entry": transcription.text})
+        # entries.insert_one({"username": username, "entry": transcription.text})
 
         return jsonify({'text': transcription.text})
 
