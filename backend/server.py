@@ -189,7 +189,7 @@ def perplexity():
     system_prompt = {
         "role": "system",
         "content": (
-            f"The user is {user_info["age"]} years old."
+            f"The user is {user_info['age']} years old."
             "Give general advice for at-home relief methods for user's symptoms and condition, given their age, but don't tell them what to do."
             "Emphasize that they should consult their healthcare provider for concerns."
         ),
