@@ -10,6 +10,8 @@ from dotenv import load_dotenv
 import uuid
 import requests
 from datetime import datetime
+from dotenv import load_dotenv
+from elevenlabs.client import ElevenLabs
 
 load_dotenv()
 
@@ -37,6 +39,12 @@ ALLOWED_EXTENSIONS = {"wav", "mp3", "ogg", "webm"}
 # Function to check allowed file extensions
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+ELEVEN_LABS_API_KEY = os.getenv('ELEVEN_LABS_API_KEY')
+ELEVEN_LABS_VOICE_ID = os.getenv('ELEVEN_LABS_VOICE_ID')
+
+AUDIO_DIR = "static/audio"
+os.makedirs(AUDIO_DIR, exist_ok=True)
 
 # Create user
 @app.route("/users", methods=["POST"])
@@ -183,14 +191,26 @@ def perplexity():
     user_info = requests.request("GET", f"http://localhost:5000/users/{username}").json()
 
     user_entries = requests.request("GET", f"http://localhost:5000/entries/{username}").json()
-    sorted_entries = sorted(user_entries, key=lambda x: datetime.strptime(x['date'], "%m-%d-%Y"), reverse=True)
+    # sorted_entries = sorted(user_entries, key=lambda x: datetime.strptime(x['date'], "%m-%d-%Y"), reverse=True)
 
-    formatted_entries = ""
-    for i, entry in enumerate(sorted_entries, start=1):
-        formatted_entries += f"{i}. Date: {entry['date']} - Entry: {entry['entry']}"
+    # formatted_entries = ""
+    # for i, entry in enumerate(sorted_entries, start=1):
+    #     formatted_entries += f"{i}. Date: {entry['date']} - Entry: {entry['entry']}"
     
 
     # System Prompt
+    # system_prompt = {
+    #     "role": "system",
+    #     "content": (
+    #         f"The user is {user_info['age']} years old."
+    #         "Give general advice for at-home relief methods for user's symptoms and condition, given their age, but don't tell them what to do."
+    #         "Emphasize that they should consult their healthcare provider for concerns."
+    #         "Look at the previous user entries and see if there are any concerning patterns. It's okay if there are not."
+    #         "If there are, summarize past symptoms to user. For example, you could say, 'you experienced 3 headaches in the past week, so ...'"
+    #         "Previous user entries: " + formatted_entries
+    #     ),
+    # }
+
     system_prompt = {
         "role": "system",
         "content": (
@@ -199,7 +219,7 @@ def perplexity():
             "Emphasize that they should consult their healthcare provider for concerns."
             "Look at the previous user entries and see if there are any concerning patterns. It's okay if there are not."
             "If there are, summarize past symptoms to user. For example, you could say, 'you experienced 3 headaches in the past week, so ...'"
-            "Previous user entries: " + formatted_entries
+            "Previous user entries: Make the response less than 80 words." 
         ),
     }
 
@@ -228,6 +248,30 @@ def perplexity():
         "error": f"Failed to get a response from perplexity: {response.status_code} - {response.text}"
     }), 500
 
+@app.route("/generate_speech", methods=["POST"])
+def generate_speech():
+    """Generate speech using Eleven Labs API."""
+    data = request.json
+    text = data.get("text")
+
+    if not text:
+        return jsonify({"error": "Text is required"}), 400
+
+    print("This is my API key", ELEVEN_LABS_API_KEY)
+    if not ELEVEN_LABS_API_KEY:
+        return jsonify({"error": "Missing Eleven Labs API Key"}), 500
+
+    client = ElevenLabs(
+        api_key=ELEVEN_LABS_API_KEY,
+    )
+
+    audio = client.text_to_speech.convert(
+        text=text,
+        voice_id=ELEVEN_LABS_VOICE_ID,
+        model_id="eleven_multilingual_v2"
+    )
+
+    return audio
 
 if __name__ == "__main__":
     app.run(debug=True)

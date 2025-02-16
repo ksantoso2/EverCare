@@ -20,10 +20,14 @@
 }
 
 .button-container {
-  perspective: 500px;
-  -moz-perspective: 500px;
-  -webkit-perspective: 500px;
-}
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    perspective: 500px;
+    -moz-perspective: 500px;
+    -webkit-perspective: 500px;
+  }
 
 .mic-button {
   display: flex;
@@ -81,11 +85,12 @@
 .mic {
   position: relative;
   top: -11px;
-  border: 10px solid #f17453;
+  border: 0px solid #f17453;
   height: 20px;
   width: 0;
   border-radius: 10px;
   transform: rotateY(180deg);
+  align-items: center;
 }
 
 .mic:after, .mic:before, .mic-base {
@@ -94,7 +99,7 @@
 
 .mic:after {
   /* content: "Stop Recording"; */
-  /* top: 7px;
+  top: 7px;
   left: -17px;
   height: 26px;
   width: 26px;
@@ -102,16 +107,16 @@
   border: 4px solid #f17453;
   border-bottom-left-radius: 110px;
   border-bottom-right-radius: 110px;
-  border-top: 0; */
+  border-top: 0;
 }
 
 .mic:before {
   content: "";
   top: 33px;
   left: -2px;
-  border-bottom: 18px solid #f17453;
+  /* border-bottom: 18px solid #f17453;
   border-left: 2px solid #f17453;
-  border-right: 2px solid #f17453;
+  border-right: 2px solid #f17453; */
 }
 
 .mic-base {
