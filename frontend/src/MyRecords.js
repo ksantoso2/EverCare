@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./MyRecords.css";
-import { FaShareAlt, FaPhoneAlt } from "react-icons/fa"; // Importing Font Awesome icons
-import Papa from "papaparse"; // Importing PapaParse library for CSV export
+import { FaShareAlt, FaPhoneAlt } from "react-icons/fa";
+import Papa from "papaparse";
 
 function MyRecords() {
   const [healthRecords, setHealthRecords] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showPopup, setShowPopup] = useState(false);
+  const [selectedEntry, setSelectedEntry] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -47,6 +49,17 @@ function MyRecords() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showPopup && !event.target.closest('.popup-content')) {
+        setShowPopup(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showPopup]);
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -56,17 +69,15 @@ function MyRecords() {
   };
 
   const handleShareWithCareProvider = (entry) => {
-    console.log("Share with Care Provider:", entry);
-    // Implement logic to share with care provider
+    setSelectedEntry(entry);
+    setShowPopup(true);
   };
 
   const handleCallDoctor = (entry) => {
     console.log("Call Doctor for:", entry);
-    // Implement logic for calling a doctor
   };
 
   const handleExportCSV = () => {
-    // Flatten health records into a CSV format
     const data = healthRecords.flatMap((group) =>
       group.entries.map((entry) => ({
         Date: group.date,
@@ -75,47 +86,38 @@ function MyRecords() {
       }))
     );
 
-    // Convert the data into CSV
     const csv = Papa.unparse(data);
-
-    // Create a download link for the CSV file
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = "health_records.csv"; // Default filename for the download
+    link.download = "health_records.csv";
     link.click();
   };
 
   return (
     <div className="my-records-container">
-      <h1>
-       {" "}
-        My Health Records
-      </h1>
-      
-      {/* Export CSV Button */}
+      <h1>My Health Records</h1>
       <button
-          className="btn-orange"
-          onClick={handleRedirectBack}
-          style={{
-            marginTop: "10px",
-            padding: "10px",
-            backgroundColor: "#f1745a",
-            color: "#fff",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-            width: "7%",
-          }}
-        >
-          Back
-        </button>
+        className="btn-orange"
+        onClick={handleRedirectBack}
+        style={{
+          marginTop: "10px",
+          padding: "10px",
+          backgroundColor: "#f1745a",
+          color: "#fff",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+          width: "7%",
+        }}
+      >
+        Back
+      </button>
       <button
         onClick={handleExportCSV}
         className="btn-export"
         style={{
           padding: "10px 20px",
-          border: "none",
           backgroundColor: "#4CAF50",
           color: "#fff",
           border: "none",
@@ -127,6 +129,7 @@ function MyRecords() {
         Export as CSV
       </button>
 
+      {/* Record List */}
       <div className="record-list">
         {healthRecords.map((group, index) => (
           <div key={index}>
@@ -166,12 +169,43 @@ function MyRecords() {
           </div>
         ))}
       </div>
+
+      {showPopup && (
+        <div className="popup-overlay">
+          <div className="popup-content">
+            <h2 className="popup-title">Share with Care Provider</h2>
+            {selectedEntry && (
+              <div className="popup-details">
+                <p>You are sharing the following record:</p>
+                <div className="popup-record">
+                <p><strong>Date:</strong> {selectedEntry.date}</p>
+                  <p><strong>Time:</strong> {selectedEntry.time}</p>
+                  <p><strong>Notes:</strong> {selectedEntry.entry}</p>
+                </div>
+              </div>
+            )}
+            <div className="popup-actions">
+              <button
+                onClick={() => setShowPopup(false)}
+                className="popup-button cancel"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  alert('Record shared successfully!');
+                  setShowPopup(false);
+                }}
+                className="popup-button share"
+              >
+                Share
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
-
-const handleViewChat = (record) => {
-  console.log("View Chat for:", record);
-};
 
 export default MyRecords;

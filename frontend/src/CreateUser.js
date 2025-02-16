@@ -20,8 +20,8 @@ function CreateUser() {
       });
 
       if (response.ok) {
-        localStorage.setItem("username", formData.username); // Store username
-        navigate("/mainpage"); // Redirect to chat page
+        localStorage.setItem("username", formData.username); 
+        navigate("/mainpage"); 
       }
     } catch (error) {
       console.error("Error creating user:", error);

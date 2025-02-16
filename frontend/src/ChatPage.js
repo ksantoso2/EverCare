@@ -12,7 +12,7 @@ function ChatPage() {
   const [perplexityResponse, setPerplexityResponse] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [text, setText] = useState("");
-  const [showConversationBox, setShowConversationBox] = useState(false); // For toggling visibility
+  const [showConversationBox, setShowConversationBox] = useState(false); 
   const mediaRecorderRef = useRef(null);
   const navigate = useNavigate();
   const username = localStorage.getItem("username");
