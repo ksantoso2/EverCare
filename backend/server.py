@@ -8,12 +8,18 @@ from werkzeug.utils import secure_filename
 import tempfile
 from dotenv import load_dotenv
 import uuid
+import requests
 
 load_dotenv()
 
-# Set up OpenAI API key
+# Set up API keys
 openai.api_key = os.getenv('OPENAI_API_KEY')
 openai_client = openai.OpenAI()
+
+perplexity_api_key = os.getenv('PERPLEXITY_API_KEY')
+perplexity_url = "https://api.perplexity.ai/chat/completions"
+# perplexity_client = openai.OpenAI(api_key=perplexity_api_key, base_url="https://api.perplexity.ai")
+
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for frontend requests
@@ -51,6 +57,39 @@ def get_users():
         return jsonify(user_list), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+    
+# Get user by username
+@app.route("/users/<username>", methods=["GET"])
+def get_user(username): 
+    try:
+        user = users.find_one({"username": username})
+        if user is None:
+            return jsonify({"message": "User not found"}), 404
+
+        user['_id'] = str(user['_id'])
+
+        return jsonify(user), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 
+
+
+@app.route("/users/<username>", methods=["PATCH"])
+def update_user(username):
+    try:
+        data = request.json
+        update = {}
+        for field in data:
+            update[field] = data[field]
+
+        result = users.update_one({"username": username}, {"$set": update})
+        if result.matched_count == 1:
+            return jsonify({"message": "User updated successfully."}), 200
+        else:
+            return jsonify({"message": "User not found."}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
 
 # Add entry
 @app.route("/entries", methods=["POST"])
@@ -130,6 +169,54 @@ def transcribe_audio():
     finally:
         file.close()
         os.remove(file_path)
+
+
+@app.route("/perplexity", methods=["POST"])
+def perplexity():
+    data = request.json
+
+    username = data.get("username")
+    user_info = requests.request("GET", f"http://localhost:5000/users/{username}").json()
+
+    user_entries = requests.request("GET", f"http://localhost:5000/entries/{username}").json()
+    
+
+    # System Prompt
+    system_prompt = {
+        "role": "system",
+        "content": (
+            f"The user is {user_info["age"]} years old."
+            "Give general advice for at-home relief methods for user's symptoms and condition, given their age, but don't tell them what to do."
+            "Emphasize that they should consult their healthcare provider for concerns."
+        ),
+    }
+
+    # User Prompt
+    user_prompt = {
+        "role": "user",
+        "content": data.get("input"),
+    }
+
+    payload = {
+        "model": "sonar",
+        "messages": [system_prompt, user_prompt],
+    }
+    headers = {
+        "Authorization": "Bearer " + perplexity_api_key,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.request("POST", perplexity_url, json=payload, headers=headers)
+
+    if response.status_code == 200:
+        # Return the JSON response from the external API
+        return jsonify(response.json())
+    else:
+        # If there is an error, return an appropriate error message
+        return jsonify({
+        "error": f"Failed to get a response from the perplexity service: {response.status_code} - {response.text}"
+    }), 500
+
 
 if __name__ == "__main__":
     app.run(debug=True)
