@@ -9,6 +9,7 @@ import tempfile
 from dotenv import load_dotenv
 import uuid
 import requests
+from datetime import datetime
 
 load_dotenv()
 
@@ -98,11 +99,14 @@ def add_entry():
         data = request.json
         username = data.get("username")
         entry = data.get("entry")
+        current_datetime = datetime.now()
+        date = current_datetime.strftime("%m-%d-%Y")
+        time = current_datetime.strftime("%H:%M")
 
         if not username or not entry:
             return jsonify({"error": "Username and entry are required"}), 400
 
-        entries.insert_one({"username": username, "entry": entry})
+        entries.insert_one({"username": username, "date": date, "time": time, "entry": entry})
         return jsonify({"message": "Entry added"}), 201
     except Exception as e:
         app.logger.error(e)
@@ -112,7 +116,7 @@ def add_entry():
 @app.route("/entries/<username>", methods=["GET"])
 def get_user_entries(username):
     try:
-        user_entries = list(entries.find({"username": username}, {"_id": 0, "entry": 1}))
+        user_entries = list(entries.find({"username": username}, {"_id": 0}))
         return jsonify(user_entries), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
@@ -179,7 +183,7 @@ def perplexity():
     user_info = requests.request("GET", f"http://localhost:5000/users/{username}").json()
 
     user_entries = requests.request("GET", f"http://localhost:5000/entries/{username}").json()
-    
+
 
     # System Prompt
     system_prompt = {
