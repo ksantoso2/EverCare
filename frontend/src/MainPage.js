@@ -47,9 +47,22 @@ function MainPage() {
         }}
       >
         <div style={{ textAlign: "left" }}>
-          <h1>Hi, </h1>
-          <h1>{username}!</h1>
-          <h3>How are you feeling today?</h3>
+          <h1>Hi, {username}! <picture>
+        <source
+          srcSet="https://fonts.gstatic.com/s/e/notoemoji/latest/1f31e/512.webp"
+          type="image/webp"
+        />
+        <img
+          src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f31e/512.gif"
+          alt="🌞"
+          width="90"
+          height="90"
+        />
+      </picture></h1>
+          
+          <h3>How are you feeling today?
+            
+          </h3>
         </div>
 
         <div style={{ width: "100%" }}>

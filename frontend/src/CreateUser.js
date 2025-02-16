@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./App.css"
+import "./App.css";
 
 function CreateUser() {
   const [formData, setFormData] = useState({ name: "", age: "", username: "" });
@@ -20,8 +20,8 @@ function CreateUser() {
       });
 
       if (response.ok) {
-        localStorage.setItem("username", formData.username); 
-        navigate("/mainpage"); 
+        localStorage.setItem("username", formData.username);
+        navigate("/mainpage");
       }
     } catch (error) {
       console.error("Error creating user:", error);
@@ -29,8 +29,26 @@ function CreateUser() {
   };
 
   return (
-    <div style={{ textAlign: "center", paddingTop: "5rem", paddingBottom: "400px" }}>
-      <h1>Hi, new User!</h1>
+    <div
+      style={{
+        textAlign: "center",
+        paddingTop: "5rem",
+        paddingBottom: "400px",
+      }}
+    >
+      <picture>
+        <source
+          srcSet="https://fonts.gstatic.com/s/e/notoemoji/latest/1f31e/512.webp"
+          type="image/webp"
+        />
+        <img
+          src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f31e/512.gif"
+          alt="🌞"
+          width="90"
+          height="90"
+        />
+      </picture>
+      <h1>Hi there, new User!</h1>
       <form
         onSubmit={handleSubmit}
         style={{
@@ -65,29 +83,29 @@ function CreateUser() {
           onChange={handleChange}
           required
         />
-        <input
+        {/* <input
           type="text"
           name="medication"
           placeholder="Medication"
           value={formData.medication}
           onChange={handleChange}
           required
-        />
+        /> */}
 
         <button
           type="submit"
           className="button-19"
-        //   style={{
-        //     marginTop: "10px",
-        //     padding: "8px",
-        //     background: "#F1745A",
-        //     color: "white",
-        //     border: "none",
-        //     borderRadius: "5px",
-        //     cursor: "pointer",
-        //   }}
+          style={{
+            marginTop: "10px",
+            padding: "8px",
+            background: "#F1745A",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
         >
-          Create User
+          Join us!
         </button>
       </form>
     </div>
