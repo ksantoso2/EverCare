@@ -16,55 +16,75 @@ function MainPage() {
   };
 
   return (
-    <div style={{ textAlign: "center", paddingTop: "5rem" }}>
-      <h1>Hi, {username}!</h1>
-      <h3>What would you like to do?</h3>
-
-      {/* Button to navigate to /chat with current username from localStorage */}
-      <div>
-        <button
-          onClick={handleRedirect}
-          style={{
-            marginTop: "10px",
-            padding: "8px",
-            backgroundColor: "#f1745a", // New background color
-            color: "#fff",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Update my info
-        </button>
-        <button
-          onClick={handleRedirect}
-          style={{
-            marginTop: "10px",
-            padding: "8px",
-            backgroundColor: "#f1745a",
-            color: "#fff",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          View my records
-        </button>
-      </div>
-      <button
-        onClick={handleRedirect}
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        xDirection: "column",
+        justifyContent: "center", // Horizontally center the content
+        alignItems: "center", // Vertically center the content
+        height: "100vh", // Full height of the viewport
+        textAlign: "center", // Center the text inside each element
+      }}
+    >
+      <div
         style={{
-          marginTop: "10px",
-          padding: "8px",
-          background: "#007bff",
-          color: "#fff",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer",
+          display: "flex",
+          flexDirection: "column",
+          xDirection: "column",
+          justifyContent: "center", // Horizontally center the content
+          alignItems: "center", // Vertically center the content
+          // height: "100vh", // Full height of the viewport
+          // textAlign: "center", // Center the text inside each element
         }}
       >
-        Speak with our AI expert
-      </button>
+        <div style={{ textAlign: "left" }}>
+          <h1>Hi, </h1>
+          <h1>{username}!</h1>
+          <h3>What would you like to do?</h3>
+        </div>
+
+        <div style={{ width: "100%" }}>
+          <div>
+            <button
+              className="btn-orange"
+              onClick={handleRedirect}
+              style={{
+                marginTop: "10px",
+                padding: "8px",
+                backgroundColor: "#f1745a",
+                color: "#fff",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+                width: "100%",
+                height: "70px",
+              }}
+            >
+              View my records
+            </button>
+          </div>
+          <div>
+            <button
+              className="btn-green"
+              onClick={handleRedirect}
+              style={{
+                marginTop: "10px",
+                padding: "8px",
+                background: "#007bff",
+                color: "#fff",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+                width: "100%",
+                height: "70px",
+              }}
+            >
+              Speak with our AI expert
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
