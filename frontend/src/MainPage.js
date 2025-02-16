@@ -101,7 +101,7 @@ function MainPage() {
                 height: "70px",
               }}
             >
-              Speak with WellNest
+              Speak with EverCare
             </button>
           </div>
         </div>
