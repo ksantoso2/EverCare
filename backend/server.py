@@ -237,7 +237,8 @@ def perplexity():
             "Emphasize that they should consult their healthcare provider for concerns."
             "Look at the previous user entries and see if there are any concerning patterns. It's okay if there are no patterns. No need to mention a lack of entries."
             "If there are, quickly summarize past symptoms to user. For example, you could say, 'you experienced 3 headaches in the past week, so ...'"
-            "Previous user entries: " + formatted_entries
+            "Previous user entries: " + formatted_entries 
+            "Format should be paragraphs, no bullet points. Casual but professional tone."
         ),
     }
 
