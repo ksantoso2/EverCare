@@ -151,6 +151,8 @@ def get_entries():
             entries_list.append({
                 "username": entry.get("username", "N/A"),
                 "entry": entry.get("entry", "N/A"),
+                "date": entry.get("date", "N/A"),
+                "time": entry.get("time", "N/A"),
                 "_id": entry['_id']
             })
         return jsonify(entries_list), 200
