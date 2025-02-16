@@ -199,7 +199,18 @@ function ChatPage() {
 
           <div className="tts-box">
             <div className="tts-container">
-              <h3>WellNest Response:</h3>
+              <h3><picture>
+  <source 
+    srcSet="https://fonts.gstatic.com/s/e/notoemoji/latest/1f340/512.webp" 
+    type="image/webp" 
+  />
+  <img 
+    src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f340/512.gif" 
+    alt="🍀" 
+    width="50" 
+    height="50" 
+  />
+</picture> WellNest Response:</h3>
               <div id="ttsText">
                 {perplexityResponse || "Click microphone to speak..."}
               </div>
