@@ -1,7 +1,6 @@
 * {
   font-family: "Atkinson Hyperlegible Next", serif;
   font-optical-sizing: auto;
-  /* font-weight: <weight>; */
   font-style: normal;
 }
 h1, h2, h3, h4, h5, h6 {
@@ -124,7 +123,7 @@ input:focus, textarea:focus {
 
 .generate-btn {
   background-color: #AF5676;
-  color: white; /* White text color */
+  color: white; 
   padding: 8px;
   border: none;
   border-radius: 30px !important;
@@ -133,7 +132,7 @@ input:focus, textarea:focus {
 }
 
 .generate-btn:hover {
-  background-color: #651733 !important; /* Darker green on hover */
+  background-color: #651733 !important; 
 }
 
 .conversation-box {

@@ -9,7 +9,7 @@ function MainPage() {
 
   const handleRedirect = () => {
     if (username) {
-      navigate("/chat"); // Redirect to chat if username exists
+      navigate("/chat"); 
     } else {
       console.error("No username found in localStorage");
     }
@@ -17,7 +17,7 @@ function MainPage() {
 
   const handleRedirectRecords = () => {
     if (username) {
-      navigate("/myrecords"); // Redirect to chat if username exists
+      navigate("/myrecords"); 
     } else {
       console.error("No username found in localStorage");
     }
