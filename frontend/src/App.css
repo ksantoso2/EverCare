@@ -4,14 +4,16 @@
   background-color: #FBF6EA !important;
 }
 
-input, textarea {
+input,
+textarea {
   border: none;
   outline: none;
   width: 100%;
   padding: 12px;
   font-size: 16px;
   background-color: transparent;
-  border-bottom: 2px solid #ccc; /* Thin bottom line */
+  border-bottom: 2px solid #ccc;
+  /* Thin bottom line */
   transition: border-color 0.3s ease-in-out;
 }
 
@@ -19,8 +21,46 @@ button {
   font-size: 1.5rem;
 }
 
-input:focus, textarea:focus {
-  border-bottom: 2px solid #ff8800; /* Highlight color on focus */
+.btn-green {
+  background-color: #5cb286 !important;
+  /* Green background */
+  padding-top: 20px !important;
+  padding-bottom: 20px !important;
+  color: white;
+  /* White text color */
+  padding: 8px;
+  border: none;
+  border-radius: 30px !important;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-green:hover {
+  background-color: #218838 !important;
+  /* Darker green on hover */
+}
+
+.btn-orange {
+  background-color: #f17453 !important;
+  /* Green background */
+  color: white;
+  /* White text color */
+  padding: 8px;
+  border: none;
+  border-radius: 30px !important;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-orange:hover {
+  background-color: #d25b00 !important;
+  /* Darker green on hover */
+}
+
+input:focus,
+textarea:focus {
+  border-bottom: 2px solid #ff8800;
+  /* Highlight color on focus */
 }
 
 .App-logo {
@@ -52,6 +92,7 @@ input:focus, textarea:focus {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
