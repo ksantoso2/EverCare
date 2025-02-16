@@ -209,7 +209,7 @@ function ChatPage() {
           <div className="tts-container">
             <h3>AI Response:</h3>
             <div id="ttsText">
-              {perplexityResponse || "Click microphone to speak..."}
+              {perplexityResponse}
             </div>
             <br />
           </div>
