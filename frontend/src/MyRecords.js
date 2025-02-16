@@ -51,13 +51,13 @@ function MyRecords() {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (showPopup && !event.target.closest('.popup-content')) {
+      if (showPopup && !event.target.closest(".popup-content")) {
         setShowPopup(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showPopup]);
 
   if (loading) {
@@ -96,7 +96,19 @@ function MyRecords() {
 
   return (
     <div className="my-records-container">
-      <h1>My Health Records</h1>
+      <picture>
+        <source
+          srcSet="https://fonts.gstatic.com/s/e/notoemoji/latest/26a1/512.webp"
+          type="image/webp"
+        />
+        <img
+          src="https://fonts.gstatic.com/s/e/notoemoji/latest/26a1/512.gif"
+          alt="⚡"
+          width="32"
+          height="32"
+        />
+      </picture>
+      <h1>My Health Records </h1>
       <button
         className="btn-orange"
         onClick={handleRedirectBack}
@@ -178,9 +190,15 @@ function MyRecords() {
               <div className="popup-details">
                 <p>You are sharing the following record:</p>
                 <div className="popup-record">
-                <p><strong>Date:</strong> {selectedEntry.date}</p>
-                  <p><strong>Time:</strong> {selectedEntry.time}</p>
-                  <p><strong>Notes:</strong> {selectedEntry.entry}</p>
+                  <p>
+                    <strong>Date:</strong> {selectedEntry.date}
+                  </p>
+                  <p>
+                    <strong>Time:</strong> {selectedEntry.time}
+                  </p>
+                  <p>
+                    <strong>Notes:</strong> {selectedEntry.entry}
+                  </p>
                 </div>
               </div>
             )}
@@ -193,7 +211,7 @@ function MyRecords() {
               </button>
               <button
                 onClick={() => {
-                  alert('Record shared successfully!');
+                  alert("Record shared successfully!");
                   setShowPopup(false);
                 }}
                 className="popup-button share"
