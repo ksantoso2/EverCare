@@ -21,7 +21,6 @@ openai_client = openai.OpenAI()
 
 perplexity_api_key = os.getenv('PERPLEXITY_API_KEY')
 perplexity_url = "https://api.perplexity.ai/chat/completions"
-# perplexity_client = openai.OpenAI(api_key=perplexity_api_key, base_url="https://api.perplexity.ai")
 
 
 app = Flask(__name__)
@@ -98,6 +97,18 @@ def update_user(username):
             return jsonify({"message": "User not found."}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+    
+
+@app.route("/users/<username>", methods=["DELETE"])
+def delete_user(username):
+    try:
+        result = users.delete_one({"username": username})
+        if result.deleted_count == 1:
+            return jsonify({"message": f"User with username {username} was deleted successfully."}), 200
+        else:
+            return jsonify({"message": f"User with username {username} not found."}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}),
 
 
 # Add entry
@@ -191,35 +202,23 @@ def perplexity():
     user_info = requests.request("GET", f"http://localhost:5000/users/{username}").json()
 
     user_entries = requests.request("GET", f"http://localhost:5000/entries/{username}").json()
-    # sorted_entries = sorted(user_entries, key=lambda x: datetime.strptime(x['date'], "%m-%d-%Y"), reverse=True)
+    sorted_entries = sorted(user_entries, key=lambda x: datetime.strptime(x['date'], "%m-%d-%Y"), reverse=True)
 
-    # formatted_entries = ""
-    # for i, entry in enumerate(sorted_entries, start=1):
-    #     formatted_entries += f"{i}. Date: {entry['date']} - Entry: {entry['entry']}"
+    formatted_entries = ""
+    for i, entry in enumerate(sorted_entries, start=1):
+        formatted_entries += f"{i}. Date: {entry['date']} - Entry: {entry['entry']}"
     
 
     # System Prompt
-    # system_prompt = {
-    #     "role": "system",
-    #     "content": (
-    #         f"The user is {user_info['age']} years old."
-    #         "Give general advice for at-home relief methods for user's symptoms and condition, given their age, but don't tell them what to do."
-    #         "Emphasize that they should consult their healthcare provider for concerns."
-    #         "Look at the previous user entries and see if there are any concerning patterns. It's okay if there are not."
-    #         "If there are, summarize past symptoms to user. For example, you could say, 'you experienced 3 headaches in the past week, so ...'"
-    #         "Previous user entries: " + formatted_entries
-    #     ),
-    # }
-
     system_prompt = {
         "role": "system",
         "content": (
             f"The user is {user_info['age']} years old."
-            "Give general advice for at-home relief methods for user's symptoms and condition, given their age, but don't tell them what to do."
+            "Briefly give some general advice for at-home relief methods for user's symptoms and condition, given their age, but don't tell them what to do."
             "Emphasize that they should consult their healthcare provider for concerns."
-            "Look at the previous user entries and see if there are any concerning patterns. It's okay if there are not."
-            "If there are, summarize past symptoms to user. For example, you could say, 'you experienced 3 headaches in the past week, so ...'"
-            "Previous user entries: Make the response less than 80 words." 
+            "Look at the previous user entries and see if there are any concerning patterns. It's okay if there are no patterns. No need to mention a lack of entries."
+            "If there are, quickly summarize past symptoms to user. For example, you could say, 'you experienced 3 headaches in the past week, so ...'"
+            "Previous user entries: " + formatted_entries
         ),
     }
 
