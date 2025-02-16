@@ -153,7 +153,7 @@ function MyRecords() {
                   >
                     <FaShareAlt /> Share with Care Provider
                   </button>
-                  <button
+                  {/* <button
                     onClick={() => handleCallDoctor(entry)}
                     className="button button-call"
                     style={{
@@ -162,7 +162,7 @@ function MyRecords() {
                     }}
                   >
                     <FaPhoneAlt /> Call Doctor
-                  </button>
+                  </button> */}
                 </div>
               </div>
             ))}
