@@ -1,7 +1,26 @@
+* {
+  font-family: "Atkinson Hyperlegible Next", serif;
+  font-optical-sizing: auto;
+  /* font-weight: <weight>; */
+  font-style: normal;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-size: 2em; /* Increases heading size */
+}
+
+p {
+  font-size: 1.5em; /* Increases paragraph text size */
+}
+
+a {
+  font-size: 1.1em; /* Increases link size */
+}
+
 base, #root {
   font-family: 'Inter', sans-serif;
   /* text-align: center; */
   background-color: #FBF6EA !important;
+  padding-bottom: 250px;
 }
 
 input, textarea {
@@ -123,3 +142,4 @@ input:focus, textarea:focus {
   justify-content: space-around;
   
 }
+

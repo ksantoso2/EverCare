@@ -12,6 +12,7 @@ function ChatPage() {
   const [perplexityResponse, setPerplexityResponse] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [text, setText] = useState("");
+  const [showConversationBox, setShowConversationBox] = useState(false); // For toggling visibility
   const mediaRecorderRef = useRef(null);
   const navigate = useNavigate();
   const username = localStorage.getItem("username");
@@ -49,25 +50,6 @@ function ChatPage() {
       setIsLoading(false);
     }
   };
-
-//   const handleEntrySubmit = async (e) => {
-//     e.preventDefault();
-//     try {
-//       const response = await fetch("http://localhost:5000/entries", {
-//         method: "POST",
-//         headers: { "Content-Type": "application/json" },
-//         body: JSON.stringify({ username, entry }),
-//       });
-
-//       if (response.ok) {
-//         setEntries([...entries, { entry }]);
-//         setEntry("");
-//         await getPerplexityResponse(entry);
-//       }
-//     } catch (error) {
-//       console.error("Error adding entry:", error);
-//     }
-//   };
 
   const startRecording = async () => {
     setIsRecording(true);
@@ -117,10 +99,11 @@ function ChatPage() {
       mediaRecorderRef.current.stop();
     }
     setIsRecording(false);
+    setShowConversationBox(true); // Show the conversation box after stopping recording
   };
 
   const generateSpeech = async () => {
-    const text = document.getElementById("ttsText").innerText.trim(); // Get text from the div
+    const text = document.getElementById("ttsText").innerText.trim();
 
     if (!text) {
       alert("No text to read aloud.");
@@ -150,19 +133,20 @@ function ChatPage() {
 
   const handleRedirectBack = () => {
     if (username) {
-      navigate("/mainpage"); // Redirect to chat if username exists
+      navigate("/mainpage");
     } else {
       console.error("No username found in localStorage");
     }
   };
 
   return (
-    <div style={{
-        height: "100vh", // Full height of the viewport
-        textAlign: "center", // Center the text inside each element
-      }}>
+    <div style={{ height: "100vh", textAlign: "center" }}>
+        <br />
+      <br />
+      <br />
+      <br />
       <button
-        className="btn-orange"
+        className="btn-orange button-19"
         onClick={handleRedirectBack}
         style={{
           marginTop: "10px",
@@ -172,15 +156,21 @@ function ChatPage() {
           border: "none",
           borderRadius: "5px",
           cursor: "pointer",
-          width: "30%",
+          width: "10%",
           height: "50px",
         }}
       >
         Back
       </button>
-      <h2>Welcome, {username}</h2>
-
-      <div className="button-container">
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <div className="button-container animate__heartBeat animate__repeat-2">
         <input
           type="checkbox"
           id="micButton"
@@ -199,26 +189,39 @@ function ChatPage() {
         </label>
       </div>
 
-      <div className="conversation-box" >
-        <div className="user-chat-box">
-          <h3>Your message:</h3>
-          <div>{entries.length > 0 && entries[entries.length - 1].entry}</div>
-        </div>
+      {/* The conversation box is hidden by default */}
+      {showConversationBox && (
+        <div className="conversation-box">
+          <div className="user-chat-box">
+            <h3>Your message:</h3>
+            <div>{entries.length > 0 && entries[entries.length - 1].entry}</div>
+          </div>
 
-        <div className="tts-box">
-          <div className="tts-container">
-            <h3>AI Response:</h3>
-            <div id="ttsText">
-              {perplexityResponse}
+          <div className="tts-box">
+            <div className="tts-container">
+              <h3>WellNest Response:</h3>
+              <div id="ttsText">
+                {perplexityResponse || "Click microphone to speak..."}
+              </div>
+              <br />
             </div>
             <br />
+            <button className="generate-btn" onClick={generateSpeech}
+            style={{
+                padding: "10px 20px",
+                // backgroundColor: "#f1745a",
+                // color: "#fff",
+                // border: "none",
+                // borderRadius: "5px",
+                // cursor: "pointer",
+                // width: "10%",
+                // height: "50px",
+              }}>
+              Read Aloud
+            </button>
           </div>
-          <br />
-          <button className="generate-btn" onClick={generateSpeech}>
-            Read Aloud
-          </button>
         </div>
-      </div>
+      )}
     </div>
   );
 }

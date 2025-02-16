@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./App.css"
 
 function CreateUser() {
   const [formData, setFormData] = useState({ name: "", age: "", username: "" });
@@ -75,15 +76,16 @@ function CreateUser() {
 
         <button
           type="submit"
-          style={{
-            marginTop: "10px",
-            padding: "8px",
-            background: "#007bff",
-            color: "#5CB286",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
+          className="button-19"
+        //   style={{
+        //     marginTop: "10px",
+        //     padding: "8px",
+        //     background: "#F1745A",
+        //     color: "white",
+        //     border: "none",
+        //     borderRadius: "5px",
+        //     cursor: "pointer",
+        //   }}
         >
           Create User
         </button>
