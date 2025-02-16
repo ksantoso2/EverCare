@@ -1,5 +1,26 @@
-.App {
-  text-align: center;
+* {
+  font-family: 'Inter', sans-serif;
+  /* text-align: center; */
+  background-color: #FBF6EA !important;
+}
+
+input, textarea {
+  border: none;
+  outline: none;
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  background-color: transparent;
+  border-bottom: 2px solid #ccc; /* Thin bottom line */
+  transition: border-color 0.3s ease-in-out;
+}
+
+button {
+  font-size: 1.5rem;
+}
+
+input:focus, textarea:focus {
+  border-bottom: 2px solid #ff8800; /* Highlight color on focus */
 }
 
 .App-logo {
@@ -21,7 +42,6 @@
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
 }
 
 .App-link {
