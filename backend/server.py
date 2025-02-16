@@ -183,7 +183,12 @@ def perplexity():
     user_info = requests.request("GET", f"http://localhost:5000/users/{username}").json()
 
     user_entries = requests.request("GET", f"http://localhost:5000/entries/{username}").json()
+    sorted_entries = sorted(user_entries, key=lambda x: datetime.strptime(x['date'], "%m-%d-%Y"), reverse=True)
 
+    formatted_entries = ""
+    for i, entry in enumerate(sorted_entries, start=1):
+        formatted_entries += f"{i}. Date: {entry['date']} - Entry: {entry['entry']}"
+    
 
     # System Prompt
     system_prompt = {
@@ -192,6 +197,9 @@ def perplexity():
             f"The user is {user_info['age']} years old."
             "Give general advice for at-home relief methods for user's symptoms and condition, given their age, but don't tell them what to do."
             "Emphasize that they should consult their healthcare provider for concerns."
+            "Look at the previous user entries and see if there are any concerning patterns. It's okay if there are not."
+            "If there are, summarize past symptoms to user. For example, you could say, 'you experienced 3 headaches in the past week, so ...'"
+            "Previous user entries: " + formatted_entries
         ),
     }
 
@@ -213,12 +221,11 @@ def perplexity():
     response = requests.request("POST", perplexity_url, json=payload, headers=headers)
 
     if response.status_code == 200:
-        # Return the JSON response from the external API
         return jsonify(response.json())
     else:
         # If there is an error, return an appropriate error message
         return jsonify({
-        "error": f"Failed to get a response from the perplexity service: {response.status_code} - {response.text}"
+        "error": f"Failed to get a response from perplexity: {response.status_code} - {response.text}"
     }), 500
 
 
