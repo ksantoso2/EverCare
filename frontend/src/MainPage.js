@@ -15,6 +15,14 @@ function MainPage() {
     }
   };
 
+  const handleRedirectRecords = () => {
+    if (username) {
+      navigate("/myrecords"); // Redirect to chat if username exists
+    } else {
+      console.error("No username found in localStorage");
+    }
+  };
+
   return (
     <div
       style={{
@@ -48,7 +56,7 @@ function MainPage() {
           <div>
             <button
               className="btn-orange"
-              onClick={handleRedirect}
+              onClick={handleRedirectRecords}
               style={{
                 marginTop: "10px",
                 padding: "8px",

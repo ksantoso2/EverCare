@@ -4,6 +4,7 @@ import CreateUser from "./CreateUser";
 import ChatPage from "./ChatPage";
 import "./App.css";
 import MainPage from "./MainPage";
+import MyRecords from "./MyRecords";
 
 
 function App() {
@@ -13,6 +14,8 @@ function App() {
         <Route path="/" element={<CreateUser />} />
         <Route path="/chat" element={<ChatPage />} />
         <Route path="/mainpage" element={<MainPage />} />
+        <Route path="/myrecords" element={<MyRecords />} />
+
       </Routes>
     </Router>
   );

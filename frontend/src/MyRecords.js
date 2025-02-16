@@ -12,7 +12,7 @@ function MyRecords() {
         const fetchData = async () => {
             try {
                 // Replace 'username' with the actual username of the logged-in user
-                const username = "user7"; // You can get this from your auth system
+                const username = localStorage.getItem("username");
                 const response = await fetch(`http://localhost:5000/entries/${username}`);
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
@@ -52,8 +52,33 @@ function MyRecords() {
         return <div>Loading...</div>;
     }
 
+    const handleRedirectBack = () => {
+        // if (username) {
+          navigate("/mainpage"); // Redirect to chat if username exists
+        // } else {
+        //   console.error("No username found in localStorage");
+        // }
+      };
+
     return (
         <div className="my-records-container">
+            <button
+        className="btn-orange"
+        onClick={handleRedirectBack}
+        style={{
+          marginTop: "10px",
+          padding: "8px",
+          backgroundColor: "#f1745a",
+          color: "#fff",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+          width: "30%",
+          height: "50px",
+        }}
+      >
+        Back
+      </button>
             <h1>My Health Records</h1>
             <div className="record-list">
                 {healthRecords.map((group, index) => (
@@ -64,11 +89,11 @@ function MyRecords() {
                                 <p>
                                     <strong>Time:</strong> {entry.time}
                                 </p>
-                                <p>
+                                {/* <p>
                                     <strong>Symptoms:</strong> {entry.symptoms}
-                                </p>
+                                </p> */}
                                 <p>
-                                    <strong>Notes:</strong> {entry.notes}
+                                    <strong>Notes:</strong> {entry.entry}
                                 </p>
                                 <button
                                     onClick={() => handleViewVitals(entry)}

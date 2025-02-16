@@ -11,6 +11,7 @@ function ChatPage() {
   const [audioBlob, setAudioBlob] = useState(null);
   const [perplexityResponse, setPerplexityResponse] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [text, setText] = useState("");
   const mediaRecorderRef = useRef(null);
   const navigate = useNavigate();
   const username = localStorage.getItem("username");
@@ -35,7 +36,7 @@ function ChatPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, input: inputText }),
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         setPerplexityResponse(data.choices[0].message.content);
@@ -83,7 +84,6 @@ function ChatPage() {
       const blob = new Blob(chunks, { type: "audio/wav" });
       setAudioBlob(blob);
 
-      const audioUrl = URL.createObjectURL(blob);
       const formData = new FormData();
       formData.append("audio", blob);
       formData.append("username", username);
@@ -96,18 +96,12 @@ function ChatPage() {
         const data = await response.json();
         if (data.text) {
           setEntry(data.text);
-          // Update entries immediately with the transcribed text
-          const newEntry = { entry: data.text };
-          setEntries(prevEntries => [...prevEntries, newEntry]);
-          
-          // Post to server
+          setEntries((prevEntries) => [...prevEntries, { entry: data.text }]);
           await fetch("http://localhost:5000/entries", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, entry: data.text }),
           });
-
-          // Get Perplexity response for the new entry
           await getPerplexityResponse(data.text);
         }
       } catch (error) {
@@ -125,53 +119,104 @@ function ChatPage() {
     setIsRecording(false);
   };
 
+  const generateSpeech = async () => {
+    const text = document.getElementById("ttsText").innerText.trim(); // Get text from the div
+
+    if (!text) {
+      alert("No text to read aloud.");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:5000/generate_speech", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Error generating speech");
+      }
+
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
+      audio.play();
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Error generating speech. Please try again.");
+    }
+  };
+
+  const handleRedirectBack = () => {
+    if (username) {
+      navigate("/mainpage"); // Redirect to chat if username exists
+    } else {
+      console.error("No username found in localStorage");
+    }
+  };
+
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        textAlign: "center",
-      }}
-    >
-      <div>
-        <h1>Chat Page</h1>
-        <h2>Welcome, {username}</h2>
+    <div style={{
+        height: "100vh", // Full height of the viewport
+        textAlign: "center", // Center the text inside each element
+      }}>
+      <button
+        className="btn-orange"
+        onClick={handleRedirectBack}
+        style={{
+          marginTop: "10px",
+          padding: "8px",
+          backgroundColor: "#f1745a",
+          color: "#fff",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+          width: "30%",
+          height: "50px",
+        }}
+      >
+        Back
+      </button>
+      <h2>Welcome, {username}</h2>
+
+      <div className="button-container">
+        <input
+          type="checkbox"
+          id="micButton"
+          className="mic-checkbox"
+          checked={isRecording}
+          onChange={() => (isRecording ? stopRecording() : startRecording())}
+        />
+        <label htmlFor="micButton" className="mic-button">
+          <div className="mic">
+            <div className="mic-button-loader"></div>
+            <div className="mic-base">Stop Recording</div>
+          </div>
+          <div className="button-message">
+            <span>{isRecording ? "" : "Press to Talk"}</span>
+          </div>
+        </label>
       </div>
 
-      <div>
-        <div className="button-container">
-          <input
-            type="checkbox"
-            id="micButton"
-            className="mic-checkbox"
-            checked={isRecording}
-            onChange={() => (isRecording ? stopRecording() : startRecording())}
-          />
-          <label htmlFor="micButton" className="mic-button">
-            <div className="mic">
-              <div className="mic-button-loader"></div>
-              <div className="mic-base">Stop Recording</div>
-            </div>
-            <div className="button-message">
-              <span>{isRecording ? "" : "Press to Talk"}</span>
-            </div>
-          </label>
+      <div className="conversation-box" >
+        <div className="user-chat-box">
+          <h3>Your message:</h3>
+          <div>{entries.length > 0 && entries[entries.length - 1].entry}</div>
         </div>
 
-        <h3>Your message:</h3>
-        <div>
-          {entries.length > 0 && entries[entries.length - 1].entry}
-        </div>
-        
-        <h3>AI Response:</h3>
-        <div>
-          {isLoading ? (
-            <p>Getting response...</p>
-          ) : (
-            perplexityResponse && <p>{perplexityResponse}</p>
-          )}
+        <div className="tts-box">
+          <div className="tts-container">
+            <h3>AI Response:</h3>
+            <div id="ttsText">
+              {perplexityResponse || "Click microphone to speak..."}
+            </div>
+            <br />
+          </div>
+          <br />
+          <button className="generate-btn" onClick={generateSpeech}>
+            Read Aloud
+          </button>
         </div>
       </div>
     </div>
