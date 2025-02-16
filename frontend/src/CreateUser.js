@@ -105,7 +105,7 @@ function CreateUser() {
             cursor: "pointer",
           }}
         >
-          Join us!
+          Log in
         </button>
       </form>
     </div>
