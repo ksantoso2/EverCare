@@ -108,7 +108,7 @@ input:focus, textarea:focus {
 
 .user-chat-box {
   background-color: #D9D9D9;
-  width: 40%;
+  width: 25%;
   padding: 20px;
   border: none;
   border-radius: 30px !important;
@@ -116,7 +116,7 @@ input:focus, textarea:focus {
 
 .tts-box {
   background-color: #D9D9D9;
-  width: 40%;
+  width: 60%;
   padding: 20px;
   border: none;
   border-radius: 30px !important;
