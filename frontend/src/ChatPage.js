@@ -50,24 +50,24 @@ function ChatPage() {
     }
   };
 
-  const handleEntrySubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch("http://localhost:5000/entries", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, entry }),
-      });
+//   const handleEntrySubmit = async (e) => {
+//     e.preventDefault();
+//     try {
+//       const response = await fetch("http://localhost:5000/entries", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({ username, entry }),
+//       });
 
-      if (response.ok) {
-        setEntries([...entries, { entry }]);
-        setEntry("");
-        await getPerplexityResponse(entry);
-      }
-    } catch (error) {
-      console.error("Error adding entry:", error);
-    }
-  };
+//       if (response.ok) {
+//         setEntries([...entries, { entry }]);
+//         setEntry("");
+//         await getPerplexityResponse(entry);
+//       }
+//     } catch (error) {
+//       console.error("Error adding entry:", error);
+//     }
+//   };
 
   const startRecording = async () => {
     setIsRecording(true);

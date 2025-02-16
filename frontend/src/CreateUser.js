@@ -28,8 +28,7 @@ function CreateUser() {
   };
 
   return (
-<div style={{ textAlign: "center", paddingTop: "5rem" }}>
-
+    <div style={{ textAlign: "center", paddingTop: "5rem", paddingBottom: "400px" }}>
       <h1>Hi, new User!</h1>
       <form
         onSubmit={handleSubmit}
