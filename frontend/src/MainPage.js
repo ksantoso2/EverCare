@@ -49,7 +49,7 @@ function MainPage() {
         <div style={{ textAlign: "left" }}>
           <h1>Hi, </h1>
           <h1>{username}!</h1>
-          <h3>What would you like to do?</h3>
+          <h3>How are you feeling today?</h3>
         </div>
 
         <div style={{ width: "100%" }}>
@@ -88,7 +88,7 @@ function MainPage() {
                 height: "70px",
               }}
             >
-              Speak with our AI expert
+              Speak with WellNest
             </button>
           </div>
         </div>
